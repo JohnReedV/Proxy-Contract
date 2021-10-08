@@ -5,19 +5,19 @@ from brownie import network, Box, ProxyAdmin, TransparentUpgradeableProxy, Contr
 def main():
     account = get_account()
     print(f"Deploying to {network.show_active()}")
-    run = Box.deploy({"from": account})
+    box = Box.deploy({"from": account})
 
     proxy_admin = ProxyAdmin.deploy({"from": account})
 
     # initializer == constructor for proxies
-    # initializer = run.store, 1
+    # initializer = box.store, 1
     # box_encoded_initializer_function = encode_function_data(initializer)
 
     box_encoded_initializer_function = encode_function_data()
 
     # deploy on proxy
     proxy = TransparentUpgradeableProxy.deploy(
-        run.address, proxy_admin.address, box_encoded_initializer_function, {
+        box.address, proxy_admin.address, box_encoded_initializer_function, {
             "from": account, "gas_limit": 1000000}
     )
     print(f"Proxy deployed to {proxy}")
